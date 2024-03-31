@@ -13,39 +13,43 @@ passport.use(
       callbackURL: GOOGLE_CALLBACK_URL,
       passReqToCallback: true,
     },
-    async (req, accessToken, refreshToken, profile, cb) => {
-      const defaultUser = {
+    async (req, accessToken, refreshToken, profile, callback) => {
+      // get profile from Google account
+      const GoogleUser = {
         fullName: `${profile.name.givenName} ${profile.name.familyName}`,
         email: profile.emails[0].value,
         picture: profile.photos[0].value,
         googleId: profile.id,
       };
 
+      // retrieve or create a user
       const user = await User.findOrCreate({
         where: { googleId: profile.id },
-        defaults: defaultUser,
+        defaults: GoogleUser,
       }).catch((err) => {
         console.log("Error signing up", err);
-        cb(err, null);
+        callback(err, null);
       });
 
-      if (user && user[0]) return cb(null, user && user[0]);
+      if (user && user[0]) {
+        return callback(null, user && user[0]);
+      }
     }
   )
 );
 
-passport.serializeUser((user, cb) => {
+passport.serializeUser((user, callback) => {
   console.log("Serializing user:", user);
-  cb(null, user.id);
+  callback(null, user.id);
 });
 
-passport.deserializeUser(async (id, cb) => {
+passport.deserializeUser(async (id, callback) => {
   const user = await User.findOne({ where: { id } }).catch((err) => {
     console.log("Error deserializing", err);
-    cb(err, null);
+    callback(err, null);
   });
 
-  console.log("DeSerialized user", user);
-
-  if (user) cb(null, user);
+  if (user) {
+    callback(null, user);
+  }
 });
