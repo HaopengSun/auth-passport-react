@@ -4,7 +4,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 require("dotenv").config();
-const cookieSession = require("cookie-session");
+const session = require("cookie-session");
 
 require("./auth/passport");
 require("./auth/passportGoogleSSO");
@@ -26,9 +26,11 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 
 app.use(
-  cookieSession({
+  session({
     maxAge: 24 * 60 * 60 * 1000,
     keys: [process.env.COOKIE_KEY],
+    resave: true,
+    saveUninitialized: true
   })
 );
 
@@ -37,10 +39,11 @@ app.use(passport.session());
 
 app.get("/", (req, res) => {
   res.json({
-    message: "🦄🌈✨👋🌎🌍🌏✨🌈🦄",
+    message: "homepage",
   });
 });
 
+// Use router middleware
 app.use("/api/v1", api);
 
 app.use(middlewares.notFound);

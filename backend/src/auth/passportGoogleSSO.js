@@ -13,7 +13,7 @@ passport.use(
       callbackURL: GOOGLE_CALLBACK_URL,
       passReqToCallback: true,
     },
-    async (req, accessToken, refreshToken, profile, callback) => {
+    async (accessToken, refreshToken, profile, done) => {
       // get profile from Google account
       const GoogleUser = {
         fullName: `${profile.name.givenName} ${profile.name.familyName}`,
@@ -28,28 +28,28 @@ passport.use(
         defaults: GoogleUser,
       }).catch((err) => {
         console.log("Error signing up", err);
-        callback(err, null);
+        done(err, null);
       });
 
       if (user && user[0]) {
-        return callback(null, user && user[0]);
+        return done(null, user && user[0]);
       }
     }
   )
 );
 
-passport.serializeUser((user, callback) => {
+passport.serializeUser((user, done) => {
   console.log("Serializing user:", user);
-  callback(null, user.id);
+  done(null, user.id);
 });
 
-passport.deserializeUser(async (id, callback) => {
+passport.deserializeUser(async (id, caldonelback) => {
   const user = await User.findOne({ where: { id } }).catch((err) => {
     console.log("Error deserializing", err);
-    callback(err, null);
+    done(err, null);
   });
 
   if (user) {
-    callback(null, user);
+    done(null, user);
   }
 });
