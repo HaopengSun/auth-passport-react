@@ -1,9 +1,9 @@
 const express = require("express");
-const { isUserAuthenticated } = require("../middlewares/auth");
+const { isUserAuthenticated, verifyAccessToken, refreshAccessToken } = require("../middlewares/auth");
 
 const router = express.Router();
 
-router.get("/auth/user", isUserAuthenticated, (req, res) => {
+router.get("/auth/user", isUserAuthenticated, verifyAccessToken, refreshAccessToken, (req, res) => {
   res.json(req.user);
 });
 

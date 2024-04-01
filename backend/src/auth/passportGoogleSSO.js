@@ -38,6 +38,8 @@ passport.use(
   )
 );
 
+// Implement serialization and deserialization functions
+// to control how user information is stored in and retrieved from the session.
 passport.serializeUser((user, done) => {
   console.log("Serializing user:", user);
   done(null, user.id);

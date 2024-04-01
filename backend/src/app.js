@@ -27,7 +27,7 @@ app.use(express.json());
 
 app.use(
   session({
-    maxAge: 24 * 60 * 60 * 1000,
+    maxAge: process.env.ACCESS_TOKEN_EXPIRATION,
     keys: [process.env.COOKIE_KEY],
     resave: true,
     saveUninitialized: true

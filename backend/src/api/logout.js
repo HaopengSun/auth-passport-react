@@ -3,18 +3,15 @@ const Blacklist = require("../models/blacklist");
 
 const router = express.Router();
 
-// Array to store blacklisted tokens
-const blacklist = [];
-
 router.post('/logout', async (req, res) => {
     req.session.destroy();
-    const token = req.headers.authorization.split(' ')[1];
-    
+
     // save blacklist token
+    const token = req.headers.authorization.split(' ')[1];
     const newToken = new Blacklist({ token });
     await newToken.save().catch((err) => {
       console.log("Error: ", err);
-      res.status(500).json({ error: "Cannot register user at the moment!" });
+      res.status(500).json({ error: "Cannot save blacklist token!" });
     });
 
     res.json({ message: 'Logged out' });
